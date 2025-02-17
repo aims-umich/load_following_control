@@ -16,3 +16,4 @@ The reactor parameters are derived from the **Holos-Gen microreactor** developed
 The system is designed to track an **input power profile**, ensuring that the output power follows the desired trajectory with minimal error. The power profile can be dynamically adjusted based on demand.  
 
 When executed with the appropriate **initial conditions** and **parameters**, the script generates the expected output, demonstrating the effectiveness of each control strategy.  
+Each script is run separately to generate the power output. 
