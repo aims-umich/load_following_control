@@ -25,7 +25,7 @@ nlobj.Model.IsContinuousTime = false;
 nlobj.Model.NumberOfParameters = 1;
 
 %define number of drums 
-num_drums = 4;  % Define number of drums and define in the discrete function 
+num_drums = 8;  % Define number of drums and define in the discrete function 
 
 nlobj.Model.OutputFcn = @(x, u, params) reactorOutputFcn(x, u, params, num_drums);
 nlobj.Jacobian.OutputFcn = @(x, u, Ts) [1 0 0 0 0 0 0 0 0 0 0 0];
@@ -66,10 +66,10 @@ ref = zeros(nt, 1);
 %time_point=[0 30 40 50 60 70 90 100 140 150];
 time_point=[0 20 30 50 60 80 90 110 130 200]*30;
 %pow=[0.8 0.8 0.4 0.4 0.8 0.8 0.4 0.4 0.8 0.8];
-%pow=[1 1 0.5 0.5 1 1 0.5 0.5 1 1]; % use for 8 drums 
-pow=[0.3 0.3 1 1 0.6 0.6 0.8 0.8 1 1];% use for four drums
+pow=[1 1 0.5 0.5 1 1 0.5 0.5 1 1]; % use for 8 drums 
+%pow=[0.3 0.3 1 1 0.6 0.6 0.8 0.8 1 1];% use for 4 drums
 %pow=[0.7 0.7 0.4 0.4 0.4 0.8 0.8 0.8 1 1]; %use for 2 drums
-%pow=[0.9 0.9 0.7 0.7 0.5 0.5 0.7 0.7 1 1]; % use for one drum 
+%pow=[0.9 0.9 0.7 0.7 0.5 0.5 0.7 0.7 1 1]; % use for 1 drum 
 %pow=[1 1 1 1 1 1 1 1 1 1];
 %pow=[1 1 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1];emergncy or power reduction
 
@@ -111,8 +111,8 @@ I0 = yi * Sum_f * Pi / lamda_I;
 
 %x0 = [pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) I0 Xe0 900.42 898.28 888.261]';
 
-%x0 = [pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) I0 Xe0 900 898 883]';%8 drums
-x0 = [pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) I0 Xe0 875 873.5 870]'; % 4 drums 
+x0 = [pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) I0 Xe0 900 898 883]';%8 drums
+%x0 = [pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) I0 Xe0 875 873.5 870]'; % 4 drums 
 %x0 = [pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) I0 Xe0 890 888 877]';%2 drums
 %x0 = [pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) I0 Xe0 897 895 881]';%1 drum
 
@@ -336,7 +336,7 @@ end
 function dx = reactorDT0(x, u, Ts)
     
     % Define number of drums
-    num_drums = 4;  % Define number of drums
+    num_drums = 8;  % Define number of drums
     [Rho_d0, Reactivity_per_degree, ~] = setParameters(num_drums); 
 
     M = 5;  
@@ -425,7 +425,7 @@ function [dx, rho] = reactorCT0(x, u, Rho_d0, Reactivity_per_degree)
 
     % Differential equations
     dx = zeros(12, 1);
-    rho = Rho_d1 + alpha_f * (Tf - Tf0) + alpha_c * (Tc - Tc0) + alpha_m * (Tm - Tm0) - Sig_x * (X - X0) / Sum_f;
+    %rho = Rho_d1 + alpha_f * (Tf - Tf0) + alpha_c * (Tc - Tc0) + alpha_m * (Tm - Tm0) - Sig_x * (X - X0) / Sum_f;% 8,2,1 drums
     %rho     = Rho_d1 + alpha_f * (Tf - 900.42) + alpha_c * (Tc - 888.261) + alpha_m * (Tm - 898.261) - Sig_x * (X - X0) / Sum_f; %4drums
 
     dx(1) = (rho - beta) / l * n_r + beta_1 / l * Cr1 + beta_2 / l * Cr2 + beta_3 / l * Cr3 + beta_4 / l * Cr4 + beta_5 / l * Cr5 + beta_6 / l * Cr6;
