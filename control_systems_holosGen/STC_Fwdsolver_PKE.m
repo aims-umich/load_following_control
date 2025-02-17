@@ -9,7 +9,7 @@ time = 0:dt:T;
 nt = length(time);
 ref = zeros(nt, 1);
 
-num_drums =4;
+num_drums =8;
 
 switch num_drums
     case 8
@@ -48,8 +48,8 @@ end
 time_point=[ 0 20 30 50 60 80 90 110 130 200]*30;
 %pow_point=[0.8 0.8 0.4 0.4 0.8 0.8 0.4 0.4 0.8 0.8];
 %pow=[0.5 0.5 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1];
-%pow=[ 1 1 0.5 0.5 1 1 0.5 0.5 1 1]; %use for 8 drums 
-pow=[0.3 0.3 1 1 0.6 0.6 0.8 0.8 1 1];% use for four drums
+pow=[ 1 1 0.5 0.5 1 1 0.5 0.5 1 1]; %use for 8 drums 
+%pow=[0.3 0.3 1 1 0.6 0.6 0.8 0.8 1 1];% use for four drums
 %pow=[0.7 0.7 0.4 0.4 0.4 0.8 0.8 0.8 1 1]; %use for two drums
 %pow=[0.9 0.9 0.7 0.7 0.5 0.5 0.7 0.7 1 1]; % use for one drum 
  
@@ -102,8 +102,8 @@ I0 = yi * Sum_f * Pi / lamda_I;
 
 
 
-%x0 = [pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) I0 Xe0 900 898 883];%8 drums
-x0 = [pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) I0 Xe0 875 873.5 870]; % 4 drums 
+x0 = [pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) I0 Xe0 900 898 883];%8 drums
+%x0 = [pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) I0 Xe0 875 873.5 870]; % 4 drums 
 %x0 = [pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) I0 Xe0 890 888 877];%2 drums
 %x0 = [pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) I0 Xe0 897 895 881];%1 drum
 
@@ -363,8 +363,8 @@ function [dx, rho] = reactorDAE(t, x, u, Rho_d0, Reactivity_per_degree,Xe0, I0, 
 
     %% ODEs
     dx      = zeros(12, 1);
-    %rho     = Rho_d1 + alpha_f * (Tf - Tf0) + alpha_c * (Tc - Tc0) + alpha_m * (Tm - Tm0) - Sig_x * (X - Xe0) / Sum_f;
-    rho     = Rho_d1 + alpha_f * (Tf - 900.42) + alpha_c * (Tc - 888.261) + alpha_m * (Tm - 898.261) - Sig_x * (X - Xe0) / Sum_f; %4drums
+    rho     = Rho_d1 + alpha_f * (Tf - Tf0) + alpha_c * (Tc - Tc0) + alpha_m * (Tm - Tm0) - Sig_x * (X - Xe0) / Sum_f; % 8,2,1 drums
+    %rho     = Rho_d1 + alpha_f * (Tf - 900.42) + alpha_c * (Tc - 888.261) + alpha_m * (Tm - 898.261) - Sig_x * (X - Xe0) / Sum_f; %4drums
     %% Kinetics equations with six-delayed neutron groups
     dx(1)   = (rho - beta) / l * n_r + beta_1 / l * Cr1 + beta_2 / l * Cr2 + beta_3 / l * Cr3 + beta_4 / l * Cr4 + beta_5 / l * Cr5 + beta_6 / l * Cr6;
     dx(2)   = Lamda_1 * n_r - Lamda_1 * Cr1;
