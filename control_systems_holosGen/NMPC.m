@@ -425,7 +425,7 @@ function [dx, rho] = reactorCT0(x, u, Rho_d0, Reactivity_per_degree)
 
     % Differential equations
     dx = zeros(12, 1);
-    %rho = Rho_d1 + alpha_f * (Tf - Tf0) + alpha_c * (Tc - Tc0) + alpha_m * (Tm - Tm0) - Sig_x * (X - X0) / Sum_f;% 8,2,1 drums
+    rho = Rho_d1 + alpha_f * (Tf - Tf0) + alpha_c * (Tc - Tc0) + alpha_m * (Tm - Tm0) - Sig_x * (X - X0) / Sum_f;% 8,2,1 drums
     %rho     = Rho_d1 + alpha_f * (Tf - 900.42) + alpha_c * (Tc - 888.261) + alpha_m * (Tm - 898.261) - Sig_x * (X - X0) / Sum_f; %4drums
 
     dx(1) = (rho - beta) / l * n_r + beta_1 / l * Cr1 + beta_2 / l * Cr2 + beta_3 / l * Cr3 + beta_4 / l * Cr4 + beta_5 / l * Cr5 + beta_6 / l * Cr6;
