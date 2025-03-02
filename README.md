@@ -27,6 +27,6 @@ To run each script, ensure the number of drums correspond to the selected initia
 - For 4 drums: Change the following variables: `num_drums = 4`, use the variable `pow` for 4 drums, and variable `x0` for 4 drums. Then go to line 343 in PID.m or line 367 in STC.m in the function `reactorDAE` and use the variable `rho` assigned for the 4 drum case and comment the other default one.
 
 *For NMPC.m:*
-- For 1, 2, 4, and 8 drums: Change the following variables: `num_drums = 1/2/4/8`, use the variable `pow` for 1/2/4/8 drum, and variable `x0` for 1/2/4/8 drum. Run the simulation. **This simulation takes long time**.
+- For 1, 2, 4, and 8 drums: Change the following variables: `num_drums = 1/2/4/8`, use the variable `pow` for 1/2/4/8 drum, and variable `x0` for 1/2/4/8 drum. Then go to line 339, there is another variable `num_drums` that you need to change to match the one at the beginning of the script. Run the simulation. **This simulation takes a long time**.
 
 Important Note: Please, note that Python scripts were not yet fully verified and optimized, so use with caution. 
