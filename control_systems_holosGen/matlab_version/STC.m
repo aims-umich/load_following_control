@@ -2,6 +2,10 @@ clc;
 clearvars;
 close all;
 
+
+num_drums =2; % select the number of drums 8,4,2,1 
+
+
 dt = 0.1;
 T = 6000;
 n0 = 1;
@@ -9,50 +13,54 @@ time = 0:dt:T;
 nt = length(time);
 ref = zeros(nt, 1);
 
-num_drums =8;
 
-switch num_drums
-    case 8
-        Rho_d0 = -0.033085599;
-        Reactivity_per_degree = 26.11e-5;
-        u0 = 77.56; % 8drums 
-        W = 0.06;
-    case 4
-        Rho_d0 = -0.033085599+0.013980296;
-        %Rho_d0 = -0.033085599;
-        Reactivity_per_degree = 16.11e-5; 
-        u0 = 108.5; % 4 drums 
-        W = 0.1;
-    case 2
-        Rho_d0 = -0.033085599 + 0.0074; 
-        Reactivity_per_degree = 7.33e-5;
-        u0 = 165.5; % 2 drums
-        W = 0.2;
-    case 1
-        Rho_d0 = -0.033085599 + 0.0071 + 0.0082; 
-        Reactivity_per_degree = 2.77e-5;
-        u0 = 170;% 1 drums
-        W = 0.49;
-    otherwise
-        Rho_d0 = -0.033085599;
-        Reactivity_per_degree = 26.11e-5;
-        u0 = 77.56; % 8drums 
-        W = 0.04;
+
+function [Rho_d0, Reactivity_per_degree, u0, W] = number_drums(num_drums)
+    switch num_drums
+        case 8
+            Rho_d0 = -0.033085599;
+            Reactivity_per_degree = 26.11e-5;
+            u0 = 77.56; % 8 drums 
+            W = 0.06;
+        case 4
+            Rho_d0 = -0.033085599 + 0.013980296;
+            Reactivity_per_degree = 16.11e-5; 
+            u0 = 108.5; % 4 drums 
+            W = 0.1;
+        case 2
+            Rho_d0 = -0.033085599 + 0.0074; 
+            Reactivity_per_degree = 7.33e-5;
+            u0 = 165.5; % 2 drums
+            W = 0.2;
+        case 1
+            Rho_d0 = -0.033085599 + 0.0071 + 0.0082; 
+            Reactivity_per_degree = 2.77e-5;
+            u0 = 170; % 1 drum
+            W = 0.49;
+        otherwise
+            Rho_d0 = -0.033085599;
+            Reactivity_per_degree = 26.11e-5;
+            u0 = 77.56; % Default to 8 drums
+            W = 0.04;
+    end
 end
 
 
 
-%time_point=[0 20 30 50 60 80 90 110 130 150];
-%time_point=[0 10 40 70 80 100 110 130 140 150];
-%time_point=[0 30 40 50 60 70 90 100 140 150];
 time_point=[ 0 20 30 50 60 80 90 110 130 200]*30;
-%pow_point=[0.8 0.8 0.4 0.4 0.8 0.8 0.4 0.4 0.8 0.8];
-%pow=[0.5 0.5 0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1];
-pow=[ 1 1 0.5 0.5 1 1 0.5 0.5 1 1]; %use for 8 drums 
-%pow=[0.3 0.3 1 1 0.6 0.6 0.8 0.8 1 1];% use for four drums
-%pow=[0.7 0.7 0.4 0.4 0.4 0.8 0.8 0.8 1 1]; %use for two drums
-%pow=[0.9 0.9 0.7 0.7 0.5 0.5 0.7 0.7 1 1]; % use for one drum 
- 
+
+if num_drums == 8
+    pow=[ 1 1 0.5 0.5 1 1 0.5 0.5 1 1]; 
+elseif num_drums == 4
+    pow=[0.3 0.3 1 1 0.6 0.6 0.8 0.8 1 1];
+elseif num_drums == 2
+    pow=[0.7 0.7 0.4 0.4 0.4 0.8 0.8 0.8 1 1]; 
+elseif num_drums == 1
+    pow=[0.9 0.9 0.7 0.7 0.5 0.5 0.7 0.7 1 1]; 
+else
+    error('Invalid number of drums specified.');
+end
+
 
 ref_old = pow(1);
 for it = 1:nt 
@@ -78,13 +86,15 @@ end
 ref(:) = ref(:);
 yref = (ref .* n0);
 
+
+
 %  STC tuning
 lambda = 0.001;
 T_C = 0.5;
 max = 180;
 min = 0;
 max_rate = 0.5;
-
+[Rho_d0, Reactivity_per_degree, u0, W] = number_drums(num_drums);
 
 %% initial condition
 Sig_x = 2.65e-22;
@@ -102,10 +112,23 @@ I0 = yi * Sum_f * Pi / lamda_I;
 
 
 
-x0 = [pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) I0 Xe0 900 898 883];%8 drums
-%x0 = [pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) I0 Xe0 875 873.5 870]; % 4 drums 
-%x0 = [pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) I0 Xe0 890 888 877];%2 drums
-%x0 = [pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) I0 Xe0 897 895 881];%1 drum
+
+% Select initial condition based on the number of drums
+if num_drums == 8
+    x0 = [pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) I0 Xe0 900 898 883];
+elseif num_drums == 4
+    x0 = [pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) I0 Xe0 875 873.5 870];
+elseif num_drums == 2
+    x0 = [pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) I0 Xe0 890 888 877];
+elseif num_drums == 1
+    x0 = [pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) pow(1) I0 Xe0 897 895 881];
+else
+    error('Invalid number of drums specified.');
+end
+
+
+
+
 
 
 
@@ -116,12 +139,12 @@ x_stc(1, :) = x0;
 u_stc(1) = u0;
 
 for i = 1:nt - 1
-    [dx, rho(i)] = reactorDAE(0, x_stc(i,:), u_stc(i), Rho_d0, Reactivity_per_degree, Xe0, I0, Pi);
+    [dx, rho(i)] = reactorDAE(0, x_stc(i,:), u_stc(i), Rho_d0, Reactivity_per_degree, Xe0, I0, Pi,num_drums);
     x_stc(i + 1, :) = x_stc(i, :) + dx' * dt;
     u_stc(i + 1) = stcController(time(i), x_stc(i + 1, 1), ref(i + 1), lambda, W, T_C, max, min, max_rate, 0, 0);
 end
 
-[~, rho(nt)] = reactorDAE(0, x_stc(nt, :), u_stc(nt), Rho_d0, Reactivity_per_degree, Xe0, I0, Pi);
+[~, rho(nt)] = reactorDAE(0, x_stc(nt, :), u_stc(nt), Rho_d0, Reactivity_per_degree, Xe0, I0, Pi,num_drums);
 t = time;
 
 u_stc = u_stc(:);
@@ -297,7 +320,7 @@ saveas(gcf, 'STC_power_simulation.png');
 
 % Reactor dynamics
 %% Reactor dynamics
-function [dx, rho] = reactorDAE(t, x, u, Rho_d0, Reactivity_per_degree,Xe0, I0, Pi)
+function [dx, rho] = reactorDAE(t, x, u, Rho_d0, Reactivity_per_degree,Xe0, I0, Pi,num_drums)
     %% Parameters
     Sig_x   = 2.65e-22;
     yi      = 0.061;
@@ -363,8 +386,20 @@ function [dx, rho] = reactorDAE(t, x, u, Rho_d0, Reactivity_per_degree,Xe0, I0, 
 
     %% ODEs
     dx      = zeros(12, 1);
-    rho     = Rho_d1 + alpha_f * (Tf - Tf0) + alpha_c * (Tc - Tc0) + alpha_m * (Tm - Tm0) - Sig_x * (X - Xe0) / Sum_f; % 8,2,1 drums
+    %rho     = Rho_d1 + alpha_f * (Tf - Tf0) + alpha_c * (Tc - Tc0) + alpha_m * (Tm - Tm0) - Sig_x * (X - Xe0) / Sum_f; % 8,2,1 drums
     %rho     = Rho_d1 + alpha_f * (Tf - 900.42) + alpha_c * (Tc - 888.261) + alpha_m * (Tm - 898.261) - Sig_x * (X - Xe0) / Sum_f; %4drums
+   
+   % num_drums=4
+   % [Rho_d0, Reactivity_per_degree, u0, W] = number_drums(num_drums);
+   % 
+   % 
+    if num_drums == 8 || num_drums == 2 || num_drums == 1
+        rho = Rho_d1 + alpha_f * (Tf - Tf0) + alpha_c * (Tc - Tc0) + alpha_m * (Tm - Tm0) - Sig_x * (X - Xe0) / Sum_f;
+    elseif num_drums == 4
+        rho = Rho_d1 + alpha_f * (Tf - 900.42) + alpha_c * (Tc - 888.261) + alpha_m * (Tm - 898.261) - Sig_x * (X - Xe0) / Sum_f;
+    else
+        error('Invalid number of drums specified.');
+    end
     %% Kinetics equations with six-delayed neutron groups
     dx(1)   = (rho - beta) / l * n_r + beta_1 / l * Cr1 + beta_2 / l * Cr2 + beta_3 / l * Cr3 + beta_4 / l * Cr4 + beta_5 / l * Cr5 + beta_6 / l * Cr6;
     dx(2)   = Lamda_1 * n_r - Lamda_1 * Cr1;
