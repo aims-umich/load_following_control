@@ -5,7 +5,7 @@ clc
 
 %define number of drums 
 
-num_drums = 8;  % Define number of drums 8,4,2,1 and also define it in the discrete function 
+num_drums = 4;  % Define number of drums 8,4,2,1  
 
 
 % Define constants and initial parameters
@@ -26,7 +26,8 @@ nlobj.ControlHorizon = 3;
 % nlobj.ControlHorizon = 2;   
 
 % Model setup
-nlobj.Model.StateFcn = @reactorDT0;
+%nlobj.Model.StateFcn = @reactorDT0;
+nlobj.Model.StateFcn = @(x, u, params) reactorDT0(x, u, Ts, num_drums);
 nlobj.Model.IsContinuousTime = false;
 nlobj.Model.NumberOfParameters = 1;
 
@@ -129,7 +130,11 @@ end
 
 
 % Extended Kalman filter
-EKF = extendedKalmanFilter(@reactorStateFcn, @reactorMeasurementFcn);
+EKF = extendedKalmanFilter(...
+    @(xk,u) reactorStateFcn(xk,u,num_drums), ... % pass num_drums explicitly
+    @reactorMeasurementFcn);
+
+%EKF = extendedKalmanFilter(@reactorStateFcn, @reactorMeasurementFcn);
 x = x0;
 y = x0(1);
 EKF.State = x0;
@@ -157,7 +162,7 @@ for ct = 1:(Duration / dt)
     xk = correct(EKF, y);
     [mv, nloptions, info] = nlmpcmove(nlobj, xk, mv, ref(ct), [], nloptions);
     xk = predict(EKF, [mv; Ts]);
-    x = reactorDT0(x, mv, Ts);
+    x = reactorDT0(x, mv, Ts,num_drums);
     y = x(1);
     [~, rho(ct)] = reactorCT0(x, mv, Rho_d0, Reactivity_per_degree);
 
@@ -345,10 +350,10 @@ function [Rho_d0, Reactivity_per_degree, u0] = setParameters(num_drums)
 end
 
 % Function to compute reactor dynamics
-function dx = reactorDT0(x, u, Ts)
+function dx = reactorDT0(x, u, Ts,num_drums)
     
     % Define number of drums
-    num_drums = 8;  % Define number of drums
+    %num_drums = 8;  % Define number of drums
     [Rho_d0, Reactivity_per_degree, ~] = setParameters(num_drums); 
 
     M = 5;  
@@ -469,7 +474,8 @@ function y = reactorMeasurementFcn(xk)
 end
 
 % State function for extended Kalman filter
-function xk1 = reactorStateFcn(xk, u)
+function xk1 = reactorStateFcn(xk, u,num_drums)
+    [Rho_d0, Reactivity_per_degree, ~] = setParameters(num_drums); 
     Ts = u(2); % Time step
-    xk1 = reactorDT0(xk, u(1), Ts);
+    xk1 = reactorDT0(xk, u(1), Ts,num_drums);
 end
