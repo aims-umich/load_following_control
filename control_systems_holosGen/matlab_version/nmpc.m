@@ -5,7 +5,7 @@ clc
 
 %define number of drums 
 
-num_drums = 4;  % Define number of drums 8,4,2,1  
+num_drums = 8;  % Define number of drums 8,4,2,1  
 
 
 % Define constants and initial parameters
