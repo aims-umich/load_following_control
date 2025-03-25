@@ -21,13 +21,13 @@ To run each script, ensure the number of drums correspond to the selected initia
 
 
 
-*For PID.m and STC.m*:
+*For PID.m, STC.m, and NMPC.m*:
 
 For 1, 2, 4, and 8 drums: Change the following variable: `num_drums = 1/2/4/8`
-
+Run the simulation
 
 *For NMPC.m:*
   
-- For 1, 2, 4, and 8 drums: Change the following variables: `num_drums = 1/2/4/8`.  There is another variable `num_drums` within the function reactorDT0 that you need to change to match the one at the beginning of the script. Run the simulation. **This simulation takes a long time**.
+.**This simulation takes a long time**.
 
 Important Note: Please, note that Python scripts were not yet fully verified and optimized, so use with caution. 
